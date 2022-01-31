@@ -17,7 +17,7 @@ export const useResubmitAllMutation = (
     null
   >(() =>
     axios.post(
-      `${config.apiEndpoint}/servicebus/topics/${topicName}/subscriptions/${subscriptionName}/deadletters/resubmitAll`,
+      `${config.apiEndpoint}/channel/states/${topicName}/subscriptions/${subscriptionName}/deadletters/resubmitAll`,
       {
         topicName,
         subscriptionName,

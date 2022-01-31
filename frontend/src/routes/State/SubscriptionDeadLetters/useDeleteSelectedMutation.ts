@@ -20,7 +20,7 @@ export const useDeleteSelectedMutation = (
     DeleteSelectedFormData
   >(formData =>
     axios.post(
-      `${config.apiEndpoint}/servicebus/topics/${topicName}/subscriptions/${subscriptionName}/deadletters/delete`,
+      `${config.apiEndpoint}/channel/states/${topicName}/subscriptions/${subscriptionName}/deadletters/delete`,
       {
         topicName,
         subscriptionName,

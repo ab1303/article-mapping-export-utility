@@ -1,34 +1,12 @@
 import React from 'react';
-import { Grid } from '@chakra-ui/core';
-
-import StatCard from './components/StatCard';
+import { Box, Heading } from '@chakra-ui/core';
 
 const Home: React.FC = () => (
-  <Grid
-    templateColumns={[null, null, 'repeat(2, 1fr)', 'repeat(4, 1fr)']}
-    gap={['1rem', '1.25rem', '1.5rem']}
-  >
-    <StatCard
-      icon={{ name: 'view', color: 'gray.500' }}
-      title="Views"
-      value="1,234"
-    />
-    <StatCard
-      icon={{ name: 'up-down', color: 'green.300' }}
-      title="Revenue"
-      value="$1,234k"
-    />
-    <StatCard
-      icon={{ name: 'warning', color: 'red.300' }}
-      title="Errors"
-      value="1234"
-    />
-    <StatCard
-      icon={{ name: 'star', color: 'orange.200' }}
-      title="Followers"
-      value="+1234k"
-    />
-  </Grid>
+  <Box w={800} p={4} m="20px auto">
+    <Heading as="h2" size="lg" textAlign="center" marginBottom="10px">
+      Channel Mapping ETL
+    </Heading>
+  </Box>
 );
 
 export default Home;

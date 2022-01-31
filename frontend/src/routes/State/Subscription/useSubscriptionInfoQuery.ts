@@ -3,22 +3,27 @@ import { useQuery } from 'react-query';
 import axios, { AxiosError } from 'axios';
 import { AppConfigurations } from 'src/types';
 import { ConfigContext } from 'src/providers/ConfigProvider';
-import { SubscriptionsQueryResponsePayload } from './types';
+import { SubscriptionInfo } from './types';
 import { useToast } from '@chakra-ui/core';
 
-export const useSubscriptionsQuery = (topicName: string) => {
+export const useSubscriptionInfoQuery = (
+  topicName: string,
+  subscriptionName: string,
+) => {
   const config = useContext<AppConfigurations>(ConfigContext);
   const toast = useToast();
 
-  const query = useQuery<SubscriptionsQueryResponsePayload, AxiosError>(
-    `subscriptions-${topicName}`,
+  const query = useQuery<SubscriptionInfo, AxiosError>(
+    `${topicName}/${subscriptionName}/info`,
     async () => {
-      const response = await axios.get<SubscriptionsQueryResponsePayload>(
-        `${config.apiEndpoint}/servicebus/topics/${topicName}`,
+      const response = await axios.get<SubscriptionInfo>(
+        `${config.apiEndpoint}/channel/states/${topicName}/subscriptions/${subscriptionName}/info`,
       );
       return response.data;
     },
     {
+      enabled: false,
+      cacheTime: 0,
       onError: (error: AxiosError) => {
         toast({
           title: 'Server Error',

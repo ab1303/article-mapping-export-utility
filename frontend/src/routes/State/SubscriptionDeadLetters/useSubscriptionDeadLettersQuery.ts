@@ -22,7 +22,7 @@ export const useSubscriptionDeadLettersQuery = (
       const response = await axios.get<
         SubscriptionDeadLettersQueryResponsePayload
       >(
-        `${config.apiEndpoint}/servicebus/topics/${topicName}/subscriptions/${subscriptionName}/deadletters`,
+        `${config.apiEndpoint}/channel/states/${topicName}/subscriptions/${subscriptionName}/deadletters`,
       );
       return response.data;
     },

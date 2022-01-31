@@ -24,7 +24,7 @@ const SubscriptionList: React.FC = () => {
   return (
     <Card>
       <Card.Header>
-        <Card.Header.Title>Topic Subscriptions</Card.Header.Title>
+        <Card.Header.Title>State Stores</Card.Header.Title>
       </Card.Header>
 
       <Table>
@@ -40,7 +40,7 @@ const SubscriptionList: React.FC = () => {
         {isFetched && !!data && data.subscriptions && (
           <Table.TBody>
             {data.subscriptions.map(subscription => {
-              const subscriptionPath = `${Path.MESSAGE_BROKER_TOPICS}/${topic}/subscriptions/${subscription.name}/messages`;
+              const subscriptionPath = `${Path.CHANNEL_MAPPER_STATES}/${topic}/subscriptions/${subscription.name}/messages`;
               return (
                 <Table.TBody.TR key={subscription.name}>
                   <Table.TBody.TD>

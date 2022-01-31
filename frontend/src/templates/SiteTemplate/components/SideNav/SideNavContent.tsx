@@ -16,7 +16,7 @@ type Props = BoxProps & {
 const SideNavContent: React.FC<Props> = ({ mode, ...props }) => {
   const appState = useAppState();
   const {
-    entity: { queues, topics },
+    entity: { states },
   } = appState;
   return (
     <Box as="nav" aria-label="Main navigation" fontSize="sm" px="6" {...props}>
@@ -26,36 +26,21 @@ const SideNavContent: React.FC<Props> = ({ mode, ...props }) => {
           <DefaultSpinner />
         </Flex>
       ) : (
-        <SideNavMenu mode={mode} label="Service Bus Entity">
-          {!!queues.length && (
-            <SideNavMenu
-              key={routeTo(Path.MESSAGE_BROKER_QUEUES)}
-              mode={mode}
-              label="Queues"
-            >
-              {queues.map(item => (
-                <SideNavItem key={item} to={item} mode={mode}>
+        <SideNavMenu mode={mode} label="">
+          <SideNavMenu
+            key={routeTo(Path.CHANNEL_MAPPER_STATES)}
+            mode={mode}
+            label="Stores"
+          >
+            {states.map(item => {
+              const topicPath = `${Path.CHANNEL_MAPPER_STATES}/${item}`;
+              return (
+                <SideNavItem key={item} to={routeTo(topicPath)} mode={mode}>
                   {item}
                 </SideNavItem>
-              ))}
-            </SideNavMenu>
-          )}
-          {!!topics.length && (
-            <SideNavMenu
-              key={routeTo(Path.MESSAGE_BROKER_TOPICS)}
-              mode={mode}
-              label="Topics"
-            >
-              {topics.map(item => {
-                const topicPath = `${Path.MESSAGE_BROKER_TOPICS}/${item}`;
-                return (
-                  <SideNavItem key={item} to={routeTo(topicPath)} mode={mode}>
-                    {item}
-                  </SideNavItem>
-                );
-              })}
-            </SideNavMenu>
-          )}
+              );
+            })}
+          </SideNavMenu>
         </SideNavMenu>
       )}
     </Box>

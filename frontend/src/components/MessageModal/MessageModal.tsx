@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/core';
 import Card from '../Card';
 import { Table } from '..';
-import { SubscriptionDeadLettersQueryResponse } from 'src/routes/Topics/SubscriptionDeadLetters/types';
-import { SubscriptionMessagesQueryResponse } from 'src/routes/Topics/SubscriptionMessages/types';
+import { SubscriptionDeadLettersQueryResponse } from 'src/routes/State/SubscriptionDeadLetters/types';
+import { SubscriptionMessagesQueryResponse } from 'src/routes/State/SubscriptionMessages/types';
 
 type responseType =
   | SubscriptionDeadLettersQueryResponse

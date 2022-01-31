@@ -17,7 +17,7 @@ import {
 import { MdAlarm } from 'react-icons/md';
 
 import Card from '../../../../components/Card';
-import { ResubmitDlqMessagesResponse } from 'src/routes/Topics/SubscriptionDeadLetters/types';
+import { ResubmitDlqMessagesResponse } from 'src/routes/State/SubscriptionDeadLetters/types';
 import { toHHMMSS, toSeconds } from 'src/utils/timeInterval';
 import StatCard from 'src/routes/Home/components/StatCard';
 import { useResubmitStatusQuery } from './useResubmitStatusQuery';

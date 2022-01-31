@@ -4,11 +4,9 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { Path, routeTo } from 'src/router';
 import Home from 'src/routes/Home';
-import Settings from 'src/routes/Settings';
-import Users from 'src/routes/Users';
-import SubscriptionList from 'src/routes/Topics/SubscriptionList';
+import SubscriptionList from 'src/routes/State/StoreList';
 import DefaultRoute from 'src/router/DefaultRoute';
-import Subscription from 'src/routes/Topics/Subscription';
+import Subscription from 'src/routes/State/Subscription';
 
 const Content: React.FC = () => {
   const { colorMode } = useColorMode();
@@ -26,24 +24,18 @@ const Content: React.FC = () => {
         px={['2rem', '2.5rem', '3rem']}
       >
         <Switch>
+          <DefaultRoute exact path={routeTo(Path.HOME)} component={Home} />
           <DefaultRoute
             exact
-            path={routeTo(Path.Settings)}
-            component={Settings}
-          />
-          <DefaultRoute exact path={routeTo(Path.PROFILE)} component={Home} />
-          <DefaultRoute path={routeTo(Path.USERS_ROOT)} component={Users} />
-          <DefaultRoute
-            exact
-            path={`${Path.MESSAGE_BROKER_TOPICS}/:topic`}
+            path={`${Path.CHANNEL_MAPPER_STATES}/:state`}
             component={SubscriptionList}
           />
           <DefaultRoute
-            path={`${Path.MESSAGE_BROKER_TOPICS}/:topic/subscriptions/:subscription`}
+            path={`${Path.CHANNEL_MAPPER_STATES}/:state/subscriptions/:subscription`}
             component={Subscription}
           />
           <Route exact path="/">
-            <Redirect to={routeTo(Path.Settings)} />
+            <Redirect to={routeTo(Path.HOME)} />
           </Route>
         </Switch>
       </Box>

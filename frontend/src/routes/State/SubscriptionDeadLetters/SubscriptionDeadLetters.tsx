@@ -40,7 +40,7 @@ import {
   SubscriptionDeadLettersQueryResponse,
 } from './types';
 import { useSubscriptionDeadLettersQuery } from './useSubscriptionDeadLettersQuery';
-import ResubmitStatusModal from 'src/routes/Topics/SubscriptionDeadLetters/ResubmitStatusModal';
+import ResubmitStatusModal from 'src/routes/State/SubscriptionDeadLetters/ResubmitStatusModal';
 import { useResubmitAllMutation } from './useResubmitAllMutation';
 import { useAppDispatch } from 'src/providers/AppStateProvider';
 
@@ -482,7 +482,7 @@ const SubscriptionDeadLetters: React.FC = () => {
               });
 
               history.push(
-                `${Path.MESSAGE_BROKER_TOPICS}/${topic}/subscriptions/${subscription}/messages`,
+                `${Path.CHANNEL_MAPPER_STATES}/${topic}/subscriptions/${subscription}/messages`,
               );
             }}
           />

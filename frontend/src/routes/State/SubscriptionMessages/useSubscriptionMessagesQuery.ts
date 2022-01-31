@@ -17,7 +17,7 @@ export const useSubscriptionMessagesQuery = (
       const response = await axios.get<
         SubscriptionMessagesQueryResponsePayload
       >(
-        `${config.apiEndpoint}/servicebus/topics/${topicName}/subscriptions/${subscriptionName}/messages`,
+        `${config.apiEndpoint}/channel/states/${topicName}/subscriptions/${subscriptionName}/messages`,
       );
       return response.data;
     },

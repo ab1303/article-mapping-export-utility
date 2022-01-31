@@ -20,7 +20,7 @@ export const useResubmitSelectedMutation = (
     ResubmitSelectedFormData
   >(formData =>
     axios.post(
-      `${config.apiEndpoint}/servicebus/topics/${topicName}/subscriptions/${subscriptionName}/deadletters/resubmit`,
+      `${config.apiEndpoint}/channel/states/${topicName}/subscriptions/${subscriptionName}/deadletters/resubmit`,
       {
         topicName,
         subscriptionName,

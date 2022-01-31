@@ -1,8 +1,8 @@
-- /api/servicebus/topics/{topicName}/Subscriptions/{subscriptionName}/deadletters
+- /api/channel/states/{stateName}/Subscriptions/{subscriptionName}/deadletters
 
 
  - POST 
-    /api/servicebus/topics/{topicName}/Subscriptions/{subscriptionName}/deadletters/ResubmitAll
+    /api/channel/states/{stateName}/Subscriptions/{subscriptionName}/deadletters/ResubmitAll
 
     201 - Accepted
     Body

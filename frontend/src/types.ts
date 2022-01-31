@@ -1,10 +1,9 @@
-import { SettingsMessages, SettingsState } from './routes/Settings/types';
 import {
   SubscriptionInfo,
   SubscriptionMessages,
-} from './routes/Topics/Subscription/types';
-import { SubscriptionDeadLettersMessages } from './routes/Topics/SubscriptionDeadLetters/types';
-import { SubscriptionListMessages } from './routes/Topics/SubscriptionList/types';
+} from './routes/State/Subscription/types';
+import { SubscriptionDeadLettersMessages } from './routes/State/SubscriptionDeadLetters/types';
+import { SubscriptionListMessages } from './routes/State/StoreList/types';
 import ActionMap from './utils/actionMap';
 
 export type AppConfigurations = {
@@ -13,16 +12,13 @@ export type AppConfigurations = {
 
 export type AppState = {
   isLoading: boolean;
-  settings: SettingsState;
   entity: {
-    queues: string[];
-    topics: string[];
+    states: string[];
   };
   selectedSubscription: SubscriptionInfo | null;
 };
 
-type ApplicationMessages = SettingsMessages &
-  SubscriptionMessages &
+type ApplicationMessages = SubscriptionMessages &
   SubscriptionListMessages &
   SubscriptionDeadLettersMessages;
 

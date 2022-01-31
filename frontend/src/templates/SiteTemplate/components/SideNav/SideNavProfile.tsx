@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import { Box, Collapse, Flex, Text, useDisclosure } from '@chakra-ui/core';
+import { Box, Flex, Text } from '@chakra-ui/core';
 import styled from '@emotion/styled';
 
 import { SideNavMode } from './modules/constants';
-import SideNavItem from './SideNavItem';
 
 type CaretProps = {
   isOpen: boolean;
