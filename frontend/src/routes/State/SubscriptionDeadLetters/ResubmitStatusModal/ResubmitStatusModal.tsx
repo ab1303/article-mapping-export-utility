@@ -23,7 +23,7 @@ import StatCard from 'src/routes/Home/components/StatCard';
 import { useResubmitStatusQuery } from './useResubmitStatusQuery';
 import { DefaultSpinner } from 'src/components';
 import { useInterval } from 'src/hooks/useInterval';
-import { SubscriptionEvent, SubscriptionInfo } from '../../Subscription/types';
+import { SubscriptionEvent, SubscriptionInfo } from '../../Home/types';
 import { useAppDispatch } from 'src/providers/AppStateProvider';
 
 interface MessageModalProps {

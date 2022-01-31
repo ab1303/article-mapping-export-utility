@@ -1,5 +1,5 @@
-import { subscriptionReducer } from './routes/State/Subscription/reducer';
-import { SubscriptionEvent } from './routes/State/Subscription/types';
+import { subscriptionReducer } from './routes/State/Home/reducer';
+import { SubscriptionEvent } from './routes/State/Home/types';
 import { SubscriptionDeadLettersEvent } from './routes/State/SubscriptionDeadLetters/types';
 import { subscriptionListReducer } from './routes/State/StoreList/reducer';
 import { SubscriptionListEvent } from './routes/State/StoreList/types';

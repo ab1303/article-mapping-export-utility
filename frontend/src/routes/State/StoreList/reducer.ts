@@ -1,5 +1,5 @@
 import { Actions } from 'src/types';
-import { SubscriptionInfo } from '../Subscription/types';
+import { SubscriptionInfo } from '../Home/types';
 import { SubscriptionListEvent } from './types';
 
 export const subscriptionListReducer = (

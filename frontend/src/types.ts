@@ -1,7 +1,7 @@
 import {
   SubscriptionInfo,
   SubscriptionMessages,
-} from './routes/State/Subscription/types';
+} from './routes/State/Home/types';
 import { SubscriptionDeadLettersMessages } from './routes/State/SubscriptionDeadLetters/types';
 import { SubscriptionListMessages } from './routes/State/StoreList/types';
 import ActionMap from './utils/actionMap';

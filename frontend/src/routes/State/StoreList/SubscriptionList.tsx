@@ -8,7 +8,7 @@ import { useSubscriptionsQuery } from './useSubscriptionsQuery';
 import { DATE_FORMAT } from 'src/constants';
 import { useAppDispatch } from 'src/providers/AppStateProvider';
 import { SubscriptionListEvent } from './types';
-import { SubscriptionInfo } from '../Subscription/types';
+import { SubscriptionInfo } from '../Home/types';
 
 const SubscriptionList: React.FC = () => {
   const appDispatch = useAppDispatch();

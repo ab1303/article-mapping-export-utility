@@ -8,6 +8,7 @@ import {
   Tabs,
   Tooltip,
   IconButton,
+  Box,
 } from '@chakra-ui/core';
 import React, { useEffect } from 'react';
 import {
@@ -19,12 +20,13 @@ import {
 } from 'react-router-dom';
 import { useAppDispatch, useAppState } from 'src/providers/AppStateProvider';
 
-import { useSubscriptionInfoQuery } from './useSubscriptionInfoQuery';
-import SubscriptionDeadLetters from '../SubscriptionDeadLetters';
+import { useSubscriptionInfoQuery } from './useStateInfoQuery';
+import StoreList from '../StoreList';
 import SubscriptionMessages from '../SubscriptionMessages';
 import { SubscriptionEvent } from './types';
+import { Card } from 'src/components';
 
-const SubscriptionList: React.FC = () => {
+const StateHome: React.FC = () => {
   const appDispatch = useAppDispatch();
   const match = useRouteMatch();
   const { topic, subscription } = useParams<{
@@ -48,18 +50,18 @@ const SubscriptionList: React.FC = () => {
     });
   }, [isFetching, data]);
 
-  if (!match || !selectedSubscription) return null;
+  // if (!match || !selectedSubscription) return null;
+  if (!match) return null;
   const url = window.location.href;
 
-  const tabIndex = url.indexOf('deadletters') > 0 ? 1 : 0;
+  const tabIndex = url.indexOf('stores') > 0 ? 1 : 0;
 
   return (
     // @ts-ignore
     <Stack spacing={3}>
       <Heading as="h2" size="lg" color="main.500">
         <Flex align="center" justify="space-between">
-          {selectedSubscription.name}
-          <Tooltip
+          {/* <Tooltip
             aria-label="refresh-subscription-count-tooltip"
             label="Refresh Subscription Counts"
             placement="top"
@@ -69,29 +71,32 @@ const SubscriptionList: React.FC = () => {
               icon="repeat"
               onClick={() => refetch()}
             />
-          </Tooltip>
+          </Tooltip> */}
         </Flex>
+        <Box p={4} color="gray.400">
+          There are many benefits to a joint design and development system. Not
+          only does it bring benefits to the design team, but it also brings
+          benefits to engineering teams. It makes sure that our experiences have
+          a consistent look and feel, not just in our design specs, but in
+          production
+        </Box>
       </Heading>
       <Tabs index={tabIndex} isManual>
         <TabList>
           <Tab>
-            <NavLink to={`${match.url}/messages`}>
-              Messages - ({selectedSubscription.activeMessageCount})
-            </NavLink>
+            <NavLink to={`${match.url}/upload`}>Upload File</NavLink>
           </Tab>
           <Tab>
-            <NavLink to={`${match.url}/deadletters`}>
-              Dead Letters - ({selectedSubscription.deadLetterMessageCount})
-            </NavLink>
+            <NavLink to={`${match.url}/stores`}>Stores</NavLink>
           </Tab>
         </TabList>
         <TabPanels>
           <Switch>
-            <Route path={`${match.path}/messages`}>
+            <Route path={`${match.path}/upload`}>
               <SubscriptionMessages />
             </Route>
-            <Route path={`${match.path}/deadletters`}>
-              <SubscriptionDeadLetters />
+            <Route path={`${match.path}/stores`}>
+              <StoreList />
             </Route>
           </Switch>
         </TabPanels>
@@ -100,6 +105,6 @@ const SubscriptionList: React.FC = () => {
   );
 };
 
-SubscriptionList.displayName = 'SubscriptionList';
+StateHome.displayName = 'StateHome';
 
-export default SubscriptionList;
+export default StateHome;

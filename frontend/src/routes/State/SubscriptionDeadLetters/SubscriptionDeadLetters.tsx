@@ -49,8 +49,8 @@ import { AxiosError } from 'axios';
 
 import DeleteSelectedAlertDialog from './DeleteSelectedAlertDialog';
 import ResubmitSelectedAlertDialog from './ResubmitSelectedAlertDialog';
-import { SubscriptionEvent, SubscriptionInfo } from '../Subscription/types';
-import { useSubscriptionInfoQuery } from '../Subscription/useSubscriptionInfoQuery';
+import { SubscriptionEvent, SubscriptionInfo } from '../Home/types';
+import { useSubscriptionInfoQuery } from '../Home/useStateInfoQuery';
 
 const selectionHook = (hooks: Hooks<any>) => {
   hooks.visibleColumns.push(columns => [

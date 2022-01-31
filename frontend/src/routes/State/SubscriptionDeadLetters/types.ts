@@ -1,4 +1,4 @@
-import { SubscriptionInfo } from '../Subscription/types';
+import { SubscriptionInfo } from '../Home/types';
 
 export type SubscriptionDeadLettersQueryResponse = {
   messageId: string;

@@ -4,9 +4,9 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { Path, routeTo } from 'src/router';
 import Home from 'src/routes/Home';
-import SubscriptionList from 'src/routes/State/StoreList';
+
 import DefaultRoute from 'src/router/DefaultRoute';
-import Subscription from 'src/routes/State/Subscription';
+import StateHome from 'src/routes/State/Home';
 
 const Content: React.FC = () => {
   const { colorMode } = useColorMode();
@@ -26,13 +26,8 @@ const Content: React.FC = () => {
         <Switch>
           <DefaultRoute exact path={routeTo(Path.HOME)} component={Home} />
           <DefaultRoute
-            exact
             path={`${Path.CHANNEL_MAPPER_STATES}/:state`}
-            component={SubscriptionList}
-          />
-          <DefaultRoute
-            path={`${Path.CHANNEL_MAPPER_STATES}/:state/subscriptions/:subscription`}
-            component={Subscription}
+            component={StateHome}
           />
           <Route exact path="/">
             <Redirect to={routeTo(Path.HOME)} />
