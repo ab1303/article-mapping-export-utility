@@ -33,9 +33,9 @@ const SideNavContent: React.FC<Props> = ({ mode, ...props }) => {
             label="Stores"
           >
             {states.map(item => {
-              const topicPath = `${Path.CHANNEL_MAPPER_STATES}/${item}`;
+              const statePath = `${Path.CHANNEL_MAPPER_STATES}/${item}/upload`;
               return (
-                <SideNavItem key={item} to={routeTo(topicPath)} mode={mode}>
+                <SideNavItem key={item} to={routeTo(statePath)} mode={mode}>
                   {item}
                 </SideNavItem>
               );

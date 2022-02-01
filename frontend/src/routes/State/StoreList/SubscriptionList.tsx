@@ -24,7 +24,8 @@ const SubscriptionList: React.FC = () => {
   return (
     <Card>
       <Card.Header>
-        <Card.Header.Title>State Stores</Card.Header.Title>
+        <Card.Header.Title>Upload File</Card.Header.Title>
+        <Card.Body></Card.Body>
       </Card.Header>
 
       <Table>

@@ -10,7 +10,7 @@ import {
   IconButton,
   Box,
 } from '@chakra-ui/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   NavLink,
   useRouteMatch,
@@ -22,9 +22,10 @@ import { useAppDispatch, useAppState } from 'src/providers/AppStateProvider';
 
 import { useSubscriptionInfoQuery } from './useStateInfoQuery';
 import StoreList from '../StoreList';
-import SubscriptionMessages from '../SubscriptionMessages';
 import { SubscriptionEvent } from './types';
 import { Card } from 'src/components';
+import { CSVReaderClickAndDragUpload } from 'src/components/CSVReader';
+import StoreArticles from '../StoreArticles';
 
 const StateHome: React.FC = () => {
   const appDispatch = useAppDispatch();
@@ -33,6 +34,10 @@ const StateHome: React.FC = () => {
     topic: string;
     subscription: string;
   }>();
+
+  const [fileData, setFileData] = useState<Array<string[]>>([]);
+  const [isFileUploaded, setIsFileUploaded] = useState<boolean>(false);
+
   const { selectedSubscription } = useAppState();
   const { data, refetch, isFetching } = useSubscriptionInfoQuery(
     topic,
@@ -60,31 +65,24 @@ const StateHome: React.FC = () => {
     // @ts-ignore
     <Stack spacing={3}>
       <Heading as="h2" size="lg" color="main.500">
-        <Flex align="center" justify="space-between">
-          {/* <Tooltip
-            aria-label="refresh-subscription-count-tooltip"
-            label="Refresh Subscription Counts"
-            placement="top"
-          >
-            <IconButton
-              aria-label="refresh-subscription-count-button"
-              icon="repeat"
-              onClick={() => refetch()}
-            />
-          </Tooltip> */}
-        </Flex>
-        <Box p={4} color="gray.400">
-          There are many benefits to a joint design and development system. Not
-          only does it bring benefits to the design team, but it also brings
-          benefits to engineering teams. It makes sure that our experiences have
-          a consistent look and feel, not just in our design specs, but in
-          production
-        </Box>
+        <Card>
+          <Card.Header>
+            <Card.Header.Title>Article Content File</Card.Header.Title>
+            <Card.Body>
+              <CSVReaderClickAndDragUpload
+                onUploadAccepted={fileData => {
+                  setFileData(fileData);
+                  setIsFileUploaded(true);
+                }}
+              />
+            </Card.Body>
+          </Card.Header>
+        </Card>
       </Heading>
       <Tabs index={tabIndex} isManual>
         <TabList>
           <Tab>
-            <NavLink to={`${match.url}/upload`}>Upload File</NavLink>
+            <NavLink to={`${match.url}/upload`}>Uploaded File</NavLink>
           </Tab>
           <Tab>
             <NavLink to={`${match.url}/stores`}>Stores</NavLink>
@@ -93,7 +91,7 @@ const StateHome: React.FC = () => {
         <TabPanels>
           <Switch>
             <Route path={`${match.path}/upload`}>
-              <SubscriptionMessages />
+              {isFileUploaded && <StoreArticles fileRecords={fileData} />}
             </Route>
             <Route path={`${match.path}/stores`}>
               <StoreList />
