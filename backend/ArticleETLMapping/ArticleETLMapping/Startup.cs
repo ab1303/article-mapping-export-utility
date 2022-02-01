@@ -1,17 +1,18 @@
 using ArticleETLMapping.Extensions;
+using ArticleETLMapping.Implementations;
+using ArticleETLMapping.Interfaces;
+using ArticleETLMapping.Repositories;
+using ArticleETLMapping.Settings;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MongoDB.ApplicationInsights.DependencyInjection;
+using MongoDB.Driver;
+using System.Text.Json.Serialization;
 
 namespace ArticleETLMapping
 {
@@ -30,14 +31,42 @@ namespace ArticleETLMapping
             services.AddSwaggerExtension();
             services.AddApiVersioningExtension();
 
+            services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddMediatR(typeof(Startup).Assembly);
+
+            // App Settings
+            services.Configure<MongoDbSettings>(Configuration.GetSection("Settings:MongoDbSettings"));
+            services.Configure<EnabledStoreSettings>(Configuration.GetSection("Settings:EnabledStoreSettings"));
+
+
             // TODO: Add Services if any
 
-            services.AddControllers();
+            // Mongo
+            var mongoDbConnString = Configuration["Settings:MongoDbSettings:ConnectionString"];
+            services.AddMongoClient(mongoDbConnString);
+            services.AddSingleton<IMongoDbContext, MongoDbContext>();
+
+            // Repo
+            services.AddTransient<IFulfilmentStoreRepository, FulfilmentStoreRepository>();
+
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            ;
+           
             services.AddCors(options =>
             {
-                options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins(
+                            "http://localhost:3000",
+                            "http://localhost:7000")
+                         .AllowAnyHeader()
+                         .AllowAnyMethod();
+                    });
             });
-          
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +80,7 @@ namespace ArticleETLMapping
             }
 
             app.UseRouting();
+            app.UseCors();
             app.UseSwaggerExtension(Configuration, provider);
 
             app.UseEndpoints(endpoints =>

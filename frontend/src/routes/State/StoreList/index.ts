@@ -1,3 +1,3 @@
-import SubscriptionList from './SubscriptionList';
+import StoreList from './StoreList';
 
-export default SubscriptionList;
+export default StoreList;

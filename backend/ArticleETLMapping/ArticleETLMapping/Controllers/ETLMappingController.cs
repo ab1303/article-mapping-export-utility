@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ArticleETLMapping.Interfaces;
+using ArticleETLMapping.Models;
+using ArticleETLMapping.Requests;
+using ArticleETLMapping.Responses;
+using AutoMapper;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,32 +14,33 @@ using System.Threading.Tasks;
 namespace ArticleETLMapping.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Produces("application/json")]
+    [Route("api/[controller]")]
     public class ETLMappingController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<ETLMappingController> _logger;
+        private readonly IFulfilmentStoreRepository _fulfilmentStoreRepository;
+        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public ETLMappingController(ILogger<ETLMappingController> logger)
+        public ETLMappingController(ILogger<ETLMappingController> logger, IMapper mapper, IMediator mediator, IFulfilmentStoreRepository fulfilmentStoreRepository)
         {
             _logger = logger;
+            _fulfilmentStoreRepository = fulfilmentStoreRepository;
+            _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IActionResult> GetStoresByState(StateEnum State)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+
+            var storeResults = await _fulfilmentStoreRepository.GetStoresByState(State.ToString());
+            if (!storeResults.IsSuccess)
+                return NotFound();
+
+
+            return Ok(_mapper.Map<IEnumerable<StoresByStateResponse>>(storeResults.Model));
         }
     }
 }

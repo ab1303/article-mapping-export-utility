@@ -4,12 +4,7 @@ import { CellProps, Column, useRowSelect, useTable } from 'react-table';
 
 import { Flex, Icon } from '@chakra-ui/core';
 
-import {
-  Card,
-  Table,
-  MessageModal,
-  TableDataLoadingSpinner,
-} from 'src/components';
+import { Card, Table, TableDataLoadingSpinner } from 'src/components';
 
 type StoreArticleRecord = {
   menu: string;
@@ -108,7 +103,7 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
     <Card>
       <Card.Header>
         <Flex textAlign="right" justify="space-between">
-          <Card.Header.Title>Subscription Active Messages</Card.Header.Title>
+          <Card.Header.Title>State wide Store Articles</Card.Header.Title>
         </Flex>
       </Card.Header>
       <Card.Body>

@@ -3,18 +3,26 @@ import { useQuery } from 'react-query';
 import axios, { AxiosError } from 'axios';
 import { AppConfigurations } from 'src/types';
 import { ConfigContext } from 'src/providers/ConfigProvider';
-import { SubscriptionsQueryResponsePayload } from './types';
 import { useToast } from '@chakra-ui/core';
 
-export const useSubscriptionsQuery = (topicName: string) => {
+export type StoresByStateRecord = {
+  storeId: number;
+  storeName: string;
+  street: string;
+  suburb: string;
+};
+
+type StoresByStateQueryResponsePayload = Array<StoresByStateRecord>;
+
+export const useStoreListQuery = (state: string) => {
   const config = useContext<AppConfigurations>(ConfigContext);
   const toast = useToast();
 
-  const query = useQuery<SubscriptionsQueryResponsePayload, AxiosError>(
-    `subscriptions-${topicName}`,
+  const query = useQuery<StoresByStateQueryResponsePayload, AxiosError>(
+    `stores-${state}`,
     async () => {
-      const response = await axios.get<SubscriptionsQueryResponsePayload>(
-        `${config.apiEndpoint}/channel/states/${topicName}`,
+      const response = await axios.get<StoresByStateQueryResponsePayload>(
+        `${config.apiEndpoint}/etlMapping?state=${state}`,
       );
       return response.data;
     },

@@ -26,6 +26,7 @@ namespace ArticleETLMapping.Extensions
             services.AddSwaggerGen(options =>
             {
                 options.OperationFilter<SwaggerDefaultValues>();
+                options.UseInlineDefinitionsForEnums();
             });
         }
 
