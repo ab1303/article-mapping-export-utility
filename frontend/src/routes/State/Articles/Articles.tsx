@@ -5,25 +5,14 @@ import { CellProps, Column, useRowSelect, useTable } from 'react-table';
 import { Flex, Icon } from '@chakra-ui/core';
 
 import { Card, Table, TableDataLoadingSpinner } from 'src/components';
-
-type StoreArticleRecord = {
-  menu: string;
-  category: string;
-  externalId: number;
-  externalData: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  price: number;
-  vat: number;
-};
+import { StoreArticleRecord } from './types';
 
 type StoreArticlesProps = {
-  fileRecords: Array<string[]>;
+  storeArticles: StoreArticleRecord[];
 };
 
 const StoreArticles: React.FC<StoreArticlesProps> = ({
-  fileRecords,
+  storeArticles,
 }: StoreArticlesProps) => {
   const [modalRowIndex, setModalRowIndex] = useState<number | null>(null);
 
@@ -66,24 +55,6 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
     [],
   );
 
-  const tableData = React.useMemo<StoreArticleRecord[]>(
-    () =>
-      fileRecords
-        ? fileRecords.slice(1).map(record => ({
-            menu: record[0],
-            category: record[1],
-            externalId: +record[2],
-            externalData: +record[3],
-            title: record[4],
-            description: record[5],
-            imageUrl: record[6],
-            price: +record[7],
-            vat: +record[8],
-          }))
-        : [],
-    [fileRecords],
-  );
-
   const hooks = [useRowSelect];
   const {
     getTableProps,
@@ -94,7 +65,7 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
   } = useTable<StoreArticleRecord>(
     {
       columns,
-      data: tableData,
+      data: storeArticles,
     },
     ...hooks,
   );
@@ -120,7 +91,7 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
             ))}
           </Table.THead>
           <Table.TBody {...getTableBodyProps()}>
-            {!fileRecords.length ? (
+            {!storeArticles.length ? (
               <TableDataLoadingSpinner columnsCount={columns.length + 1} />
             ) : (
               rows.map(row => {

@@ -18,14 +18,15 @@ import {
   Switch,
   useParams,
 } from 'react-router-dom';
-import { useAppDispatch, useAppState } from 'src/providers/AppStateProvider';
+import { useAppDispatch } from 'src/providers/AppStateProvider';
 
 import { useSubscriptionInfoQuery } from './useStateInfoQuery';
 import StoreList from '../StoreList';
 import { SubscriptionEvent } from './types';
 import { Card } from 'src/components';
 import { CSVReaderClickAndDragUpload } from 'src/components/CSVReader';
-import StoreArticles from '../StoreArticles';
+import StoreArticles from '../Articles';
+import { StoreArticleRecord } from '../Articles/types';
 
 const StateHome: React.FC = () => {
   const appDispatch = useAppDispatch();
@@ -38,11 +39,25 @@ const StateHome: React.FC = () => {
   const [fileData, setFileData] = useState<Array<string[]>>([]);
   const [isFileUploaded, setIsFileUploaded] = useState<boolean>(false);
 
-  const { selectedSubscription } = useAppState();
-  const { data, refetch, isFetching } = useSubscriptionInfoQuery(
-    topic,
-    subscription,
+  const storeArticles = React.useMemo<StoreArticleRecord[]>(
+    () =>
+      fileData
+        ? fileData.slice(1).map(record => ({
+            menu: record[0],
+            category: record[1],
+            externalId: +record[2],
+            externalData: +record[3],
+            title: record[4],
+            description: record[5],
+            imageUrl: record[6],
+            price: +record[7],
+            vat: +record[8],
+          }))
+        : [],
+    [fileData],
   );
+
+  const { data, isFetching } = useSubscriptionInfoQuery(topic, subscription);
 
   useEffect(() => {
     if (isFetching || !data) return;
@@ -82,7 +97,7 @@ const StateHome: React.FC = () => {
       <Tabs index={tabIndex} isManual>
         <TabList>
           <Tab>
-            <NavLink to={`${match.url}/upload`}>Uploaded File</NavLink>
+            <NavLink to={`${match.url}/upload`}>Articles</NavLink>
           </Tab>
           <Tab>
             <NavLink to={`${match.url}/stores`}>Stores</NavLink>
@@ -91,10 +106,12 @@ const StateHome: React.FC = () => {
         <TabPanels>
           <Switch>
             <Route path={`${match.path}/upload`}>
-              {isFileUploaded && <StoreArticles fileRecords={fileData} />}
+              {isFileUploaded && (
+                <StoreArticles storeArticles={storeArticles} />
+              )}
             </Route>
             <Route path={`${match.path}/stores`}>
-              <StoreList />
+              <StoreList storeArticles={storeArticles} />
             </Route>
           </Switch>
         </TabPanels>
