@@ -5,7 +5,7 @@ import { AppConfigurations } from 'src/types';
 import { ConfigContext } from 'src/providers/ConfigProvider';
 import {
   StoreArticlesUploadResponsePayload,
-  ResubmitSelectedStoreData,
+  UploadSelectedStoreData,
 } from './types';
 
 export const useUploadArticlesMutation = () => {
@@ -14,7 +14,7 @@ export const useUploadArticlesMutation = () => {
   const mutation = useMutation<
     StoreArticlesUploadResponsePayload,
     AxiosError,
-    ResubmitSelectedStoreData
+    UploadSelectedStoreData
   >(formData =>
     axios.post(`${config.apiEndpoint}/etlmapping/storeArticles/upload`, {
       storeArticles: formData.storeArticles,

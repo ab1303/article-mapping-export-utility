@@ -34,7 +34,11 @@ import { MdMoreVert } from 'react-icons/md';
 import { StoreArticleRecord } from '../Articles/types';
 import { useUploadArticlesMutation } from './useUploadArticlesMutation';
 import { AxiosError } from 'axios';
-import { StoreArticleStatus, StoresByStateUploadRecord } from './types';
+import {
+  ChannelStoreArticleData,
+  StoreArticleStatus,
+  StoresByStateUploadRecord,
+} from './types';
 
 const selectionHook = (hooks: Hooks<any>) => {
   hooks.visibleColumns.push(columns => [
@@ -94,28 +98,34 @@ const StoreList: React.FC<{
   const [rowIndex, setRowIndex] = useState<number | null>(null);
   const [openMessageModal, setOpenMessageModal] = useState<boolean>(false);
 
-  const [
-    messageSelectionLockedUntilUtc,
-    setMessageSelectionLockedUntilUtc,
-  ] = useState<number | null>(null);
-
   useEffect(() => {
     if (data) setTableData(data.map(d => ({ ...d, status: 'UN_PROCESSED' })));
   }, [data]);
 
-  useEffect(() => {
-    if (!messageSelectionLockedUntilUtc) return;
+  function prepareStoreArticles(storeId: number): ChannelStoreArticleData[] {
+    const storeArticlesPayload = storeArticles.map(sa => {
+      return {
+        channel: 'UE',
+        storeId: storeId,
+        articleId: sa.externalId,
+      };
+    });
+    return storeArticlesPayload;
+  }
 
-    const interval = window.setInterval(() => {
-      if (Date.now() > messageSelectionLockedUntilUtc) {
-        setMessageSelectionLockedUntilUtc(null);
-      }
-    }, 1000);
-    return () => {
-      console.log('Timer cleared');
-      window.clearInterval(interval);
-    };
-  }, [messageSelectionLockedUntilUtc]);
+  const exportDataHandler = (
+    fileName: string,
+    data: ChannelStoreArticleData[],
+  ) => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(data),
+    )}`;
+    const link = document.createElement('a');
+    link.href = jsonString;
+    link.download = `Store Articles - ${fileName}.json`;
+
+    link.click();
+  };
 
   const columns = React.useMemo<Column<StoresByStateUploadRecord>[]>(
     () => [
@@ -154,6 +164,25 @@ const StoreList: React.FC<{
         },
       },
       {
+        Header: 'Download',
+        Cell: ({ row }: CellProps<any>) => {
+          const { original } = row;
+
+          return storeArticles.length ? (
+            <Icon
+              style={{ cursor: 'hand' }}
+              onClick={() => {
+                exportDataHandler(
+                  original.storeId,
+                  prepareStoreArticles(original.storeId),
+                );
+              }}
+              name="attachment"
+            />
+          ) : null;
+        },
+      },
+      {
         Header: 'Status',
         Cell: ({ row }: CellProps<any>) => {
           const { original } = row;
@@ -171,13 +200,8 @@ const StoreList: React.FC<{
         },
       },
     ],
-    [],
+    [storeArticles],
   );
-
-  // const tableData = React.useMemo<StoresByStateRecord[]>(
-  //   () => (data ? data : []),
-  //   [data],
-  // );
 
   const hooks = [useRowSelect, selectionHook];
   const {
@@ -199,18 +223,17 @@ const StoreList: React.FC<{
     mutateAsync: uploadStoreArticlesMutationAsync,
   } = useUploadArticlesMutation();
 
-  function prepareStoreArticles(storeId: number) {
-    const storeArticlesPayload = storeArticles.map(sa => {
-      return {
-        channel: 'UE',
-        storeId: storeId,
-        articleId: sa.externalId,
-      };
-    });
-    return storeArticlesPayload;
-  }
+  const downloadArticlesJsonHandler = async () => {
+    const storeIds = selectedFlatRows.map(sfr => sfr.original.storeId);
 
-  const resubmitSelectedHandler = async () => {
+    const preparedStoreArticles = storeIds
+      .map(storeId => prepareStoreArticles(storeId))
+      .reduce((prev, current) => [...prev, ...current]);
+
+    exportDataHandler('selected', preparedStoreArticles);
+  };
+
+  const uploadArticlesHandler = async () => {
     const storeIds = selectedFlatRows
       .filter(
         sfr =>
@@ -221,7 +244,7 @@ const StoreList: React.FC<{
 
     for (let index = 0; index < storeIds.length; index++) {
       const storeId = storeIds[index];
-      const storeArticles = prepareStoreArticles(storeId);
+      const preparedStoreArticles = prepareStoreArticles(storeId);
 
       setTableData(prevTableData =>
         prevTableData.map(d => {
@@ -233,7 +256,7 @@ const StoreList: React.FC<{
 
       await uploadStoreArticlesMutationAsync(
         {
-          storeArticles,
+          storeArticles: preparedStoreArticles,
         },
         {
           onSuccess: result => {
@@ -287,7 +310,7 @@ const StoreList: React.FC<{
             <MenuList>
               <MenuItem
                 isDisabled={disableSelectedAction}
-                onClick={resubmitSelectedHandler}
+                onClick={uploadArticlesHandler}
               >
                 Upload articles for selected Stores
                 {disableSelectedAction && (
@@ -307,6 +330,20 @@ const StoreList: React.FC<{
                     </Tooltip>
                   </span>
                 )}
+              </MenuItem>
+              <MenuItem
+                isDisabled={disableSelectedAction}
+                onClick={downloadArticlesJsonHandler}
+              >
+                Download Json file for selected Stores
+                <span
+                  style={{
+                    marginLeft: '5px',
+                    marginBottom: '5px',
+                  }}
+                >
+                  <Icon size="5" name="attachment" />
+                </span>
               </MenuItem>
             </MenuList>
           </Menu>

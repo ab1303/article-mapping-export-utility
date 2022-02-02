@@ -6,7 +6,7 @@ export type ChannelStoreArticleData = {
   articleId: number;
 };
 
-export type ResubmitSelectedStoreData = {
+export type UploadSelectedStoreData = {
   storeArticles: ChannelStoreArticleData[];
 };
 
