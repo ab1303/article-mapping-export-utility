@@ -3,7 +3,7 @@ import {
   SubscriptionMessages,
 } from './routes/State/Home/types';
 import { SubscriptionDeadLettersMessages } from './routes/State/SubscriptionDeadLetters/types';
-import { SubscriptionListMessages } from './routes/State/StoreList/types';
+// import { SubscriptionListMessages } from './routes/State/StoreList/types';
 import ActionMap from './utils/actionMap';
 
 export type AppConfigurations = {
@@ -19,7 +19,7 @@ export type AppState = {
 };
 
 type ApplicationMessages = SubscriptionMessages &
-  SubscriptionListMessages &
+  // SubscriptionListMessages &
   SubscriptionDeadLettersMessages;
 
 export type Actions = ActionMap<ApplicationMessages>[keyof ActionMap<

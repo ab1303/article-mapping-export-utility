@@ -4,6 +4,7 @@ using ArticleETLMapping.Requests;
 using ArticleETLMapping.Responses;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -42,5 +43,21 @@ namespace ArticleETLMapping.Controllers
 
             return Ok(_mapper.Map<IEnumerable<StoresByStateResponse>>(storeResults.Model));
         }
+
+
+        [HttpPost]
+        [Route("storeArticles/upload")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        public IActionResult UpoadChannelStoreArticles(ChannelStoreArticlesRequest request)
+        {
+            return Ok();
+            //var storeResults = await _fulfilmentStoreRepository.GetStoresByState(State.ToString());
+            //if (!storeResults.IsSuccess)
+            //    return NotFound();
+
+
+            //return Ok(_mapper.Map<IEnumerable<StoresByStateResponse>>(storeResults.Model));
+        }
+
     }
 }

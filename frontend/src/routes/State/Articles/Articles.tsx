@@ -1,8 +1,8 @@
 /* eslint-disable react/display-name */
-import React, { useState } from 'react';
-import { CellProps, Column, useRowSelect, useTable } from 'react-table';
+import React from 'react';
+import { Column, useRowSelect, useTable } from 'react-table';
 
-import { Flex, Icon } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
 
 import { Card, Table, TableDataLoadingSpinner } from 'src/components';
 import { StoreArticleRecord } from './types';
@@ -14,9 +14,6 @@ type StoreArticlesProps = {
 const StoreArticles: React.FC<StoreArticlesProps> = ({
   storeArticles,
 }: StoreArticlesProps) => {
-  const [modalRowIndex, setModalRowIndex] = useState<number | null>(null);
-
-  const [openMessageModal, setOpenMessageModal] = useState<boolean>(false);
   const columns = React.useMemo<Column<StoreArticleRecord>[]>(
     () => [
       {
@@ -111,13 +108,6 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
             )}
           </Table.TBody>
         </Table>
-
-        {/* <MessageModal
-          openMessageModal={openMessageModal}
-          onCloseMessageModal={() => setOpenMessageModal(false)}
-          message={modalRowIndex != null ? tableData[modalRowIndex] : null}
-          displayProps={['messageId', 'content']}
-        /> */}
       </Card.Body>
     </Card>
   );

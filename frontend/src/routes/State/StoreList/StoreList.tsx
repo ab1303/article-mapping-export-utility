@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import {
   Card,
@@ -9,8 +9,7 @@ import {
   IndeterminateCheckbox,
   StoreArticlesModal,
 } from 'src/components';
-import { StoresByStateRecord, useStoreListQuery } from './useStoreListQuery';
-import { useAppDispatch } from 'src/providers/AppStateProvider';
+import { useStoreListQuery } from './useStoreListQuery';
 
 import {
   Button,
@@ -32,9 +31,10 @@ import {
   useTable,
 } from 'react-table';
 import { MdMoreVert } from 'react-icons/md';
-import { AxiosError } from 'axios';
-import { useResubmitAllMutation } from '../SubscriptionDeadLetters/useResubmitAllMutation';
 import { StoreArticleRecord } from '../Articles/types';
+import { useUploadArticlesMutation } from './useUploadArticlesMutation';
+import { AxiosError } from 'axios';
+import { StoreArticleStatus, StoresByStateUploadRecord } from './types';
 
 const selectionHook = (hooks: Hooks<any>) => {
   hooks.visibleColumns.push(columns => [
@@ -54,10 +54,25 @@ const selectionHook = (hooks: Hooks<any>) => {
       ),
       // The cell can use the individual row's getToggleRowSelectedProps method
       // to the render a checkbox
-      Cell: ({ row }: CellProps<any>) => (
-        // @ts-ignore
-        <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-      ),
+      Cell: ({ row }: CellProps<any>) => {
+        // if (row.original.storeId === 1370) return null;
+        switch (row.original.status) {
+          case StoreArticleStatus.UN_PROCESSED:
+            return (
+              <>
+                {
+                  // @ts-ignore
+                  <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                }
+              </>
+            );
+          case StoreArticleStatus.IN_PROGRESS:
+          case StoreArticleStatus.PROCESSED:
+          case StoreArticleStatus.FAILED:
+          default:
+            return null;
+        }
+      },
     },
     ...columns,
   ]);
@@ -71,34 +86,22 @@ const selectionHook = (hooks: Hooks<any>) => {
 const StoreList: React.FC<{
   storeArticles: StoreArticleRecord[];
 }> = ({ storeArticles }) => {
-  const appDispatch = useAppDispatch();
   const toast = useToast();
   const { state } = useParams<{ state: string }>();
-  const { data, isFetched, isFetching } = useStoreListQuery(state);
+  const { data, isFetching } = useStoreListQuery(state);
 
+  const [tableData, setTableData] = useState<StoresByStateUploadRecord[]>([]);
   const [rowIndex, setRowIndex] = useState<number | null>(null);
-  const [resubmitAllState, setResubmitAllState] = useState<boolean>(false);
   const [openMessageModal, setOpenMessageModal] = useState<boolean>(false);
-  const [showTableLoading, setShowTableLoading] = useState<boolean>(false);
-  const [resubmitAllAlertDialog, setResubmitAllAlertDialog] = useState<boolean>(
-    false,
-  );
 
   const [
     messageSelectionLockedUntilUtc,
     setMessageSelectionLockedUntilUtc,
   ] = useState<number | null>(null);
 
-  const [
-    resubmitSelectedAlertDialog,
-    setResubmitSelectedAlertDialog,
-  ] = useState<{
-    showDialog: boolean;
-    storeIds: number[];
-  }>({
-    showDialog: false,
-    storeIds: [],
-  });
+  useEffect(() => {
+    if (data) setTableData(data.map(d => ({ ...d, status: 'UN_PROCESSED' })));
+  }, [data]);
 
   useEffect(() => {
     if (!messageSelectionLockedUntilUtc) return;
@@ -114,16 +117,7 @@ const StoreList: React.FC<{
     };
   }, [messageSelectionLockedUntilUtc]);
 
-  useEffect(() => {
-    if (isFetching || resubmitAllState) {
-      setShowTableLoading(true);
-      return;
-    }
-
-    setShowTableLoading(false);
-  }, [isFetching, resubmitAllState]);
-
-  const columns = React.useMemo<Column<StoresByStateRecord>[]>(
+  const columns = React.useMemo<Column<StoresByStateUploadRecord>[]>(
     () => [
       {
         Header: 'Store Id',
@@ -159,14 +153,31 @@ const StoreList: React.FC<{
           );
         },
       },
+      {
+        Header: 'Status',
+        Cell: ({ row }: CellProps<any>) => {
+          const { original } = row;
+
+          switch (original.status) {
+            case StoreArticleStatus.IN_PROGRESS:
+              return <Icon name="spinner" />;
+            case StoreArticleStatus.PROCESSED:
+              return <Icon name="check" />;
+            case StoreArticleStatus.FAILED:
+              return <Icon name="repeat" />;
+            default:
+              return null;
+          }
+        },
+      },
     ],
     [],
   );
 
-  const tableData = React.useMemo<StoresByStateRecord[]>(
-    () => (data ? data : []),
-    [data],
-  );
+  // const tableData = React.useMemo<StoresByStateRecord[]>(
+  //   () => (data ? data : []),
+  //   [data],
+  // );
 
   const hooks = [useRowSelect, selectionHook];
   const {
@@ -176,7 +187,7 @@ const StoreList: React.FC<{
     rows,
     selectedFlatRows,
     prepareRow,
-  } = useTable<StoresByStateRecord>(
+  } = useTable<StoresByStateUploadRecord>(
     {
       columns,
       data: tableData,
@@ -184,13 +195,9 @@ const StoreList: React.FC<{
     ...hooks,
   );
 
-  const resubmitSelectedHandler = () => {
-    const storeIds = selectedFlatRows.map(sfr => sfr.original.storeId);
-    setResubmitSelectedAlertDialog({
-      showDialog: true,
-      storeIds,
-    });
-  };
+  const {
+    mutateAsync: uploadStoreArticlesMutationAsync,
+  } = useUploadArticlesMutation();
 
   function prepareStoreArticles(storeId: number) {
     const storeArticlesPayload = storeArticles.map(sa => {
@@ -200,8 +207,71 @@ const StoreList: React.FC<{
         articleId: sa.externalId,
       };
     });
-    return JSON.stringify(storeArticlesPayload);
+    return storeArticlesPayload;
   }
+
+  const resubmitSelectedHandler = async () => {
+    const storeIds = selectedFlatRows
+      .filter(
+        sfr =>
+          sfr.original.status === StoreArticleStatus.UN_PROCESSED ||
+          sfr.original.status === StoreArticleStatus.FAILED,
+      )
+      .map(sfr => sfr.original.storeId);
+
+    for (let index = 0; index < storeIds.length; index++) {
+      const storeId = storeIds[index];
+      const storeArticles = prepareStoreArticles(storeId);
+
+      setTableData(prevTableData =>
+        prevTableData.map(d => {
+          if (d.storeId === storeId)
+            return { ...d, status: StoreArticleStatus.IN_PROGRESS };
+          return d;
+        }),
+      );
+
+      await uploadStoreArticlesMutationAsync(
+        {
+          storeArticles,
+        },
+        {
+          onSuccess: result => {
+            console.log('upload articles result', result);
+            setTableData(prevTableData =>
+              prevTableData.map(d => {
+                if (d.storeId === storeId)
+                  return { ...d, status: StoreArticleStatus.PROCESSED };
+                return d;
+              }),
+            );
+
+            toast({
+              title: 'Channel Store Articles',
+              description:
+                'Articles for selected stores uploaded successfully!',
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+            });
+          },
+          onError: (error: AxiosError) => {
+            let errorMessage = error.message;
+            if (error.response && error.response.data) {
+              errorMessage = `${errorMessage}. ${error.response.data.message}`;
+            }
+            toast({
+              title: 'Server Error',
+              description: errorMessage || '',
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+            });
+          },
+        },
+      );
+    }
+  };
 
   const disableSelectedAction = false;
   return (
@@ -215,9 +285,6 @@ const StoreList: React.FC<{
               <MdMoreVert />
             </MenuButton>
             <MenuList>
-              <MenuItem onClick={() => setResubmitAllAlertDialog(true)}>
-                Upload articles for all Stores
-              </MenuItem>
               <MenuItem
                 isDisabled={disableSelectedAction}
                 onClick={resubmitSelectedHandler}
@@ -285,7 +352,9 @@ const StoreList: React.FC<{
           onCloseMessageModal={() => setOpenMessageModal(false)}
           message={
             rowIndex != null
-              ? prepareStoreArticles(tableData[rowIndex].storeId)
+              ? JSON.stringify(
+                  prepareStoreArticles(tableData[rowIndex].storeId),
+                )
               : ''
           }
         />

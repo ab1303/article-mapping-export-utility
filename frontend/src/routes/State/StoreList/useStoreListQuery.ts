@@ -4,15 +4,7 @@ import axios, { AxiosError } from 'axios';
 import { AppConfigurations } from 'src/types';
 import { ConfigContext } from 'src/providers/ConfigProvider';
 import { useToast } from '@chakra-ui/core';
-
-export type StoresByStateRecord = {
-  storeId: number;
-  storeName: string;
-  street: string;
-  suburb: string;
-};
-
-type StoresByStateQueryResponsePayload = Array<StoresByStateRecord>;
+import { StoresByStateQueryResponsePayload } from './types';
 
 export const useStoreListQuery = (state: string) => {
   const config = useContext<AppConfigurations>(ConfigContext);

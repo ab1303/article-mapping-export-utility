@@ -1,13 +1,35 @@
-import { SubscriptionInfo } from '../Home/types';
+export type StoreArticlesUploadResponsePayload = {};
 
-export type SubscriptionsQueryResponsePayload = {
-  subscriptions: SubscriptionInfo[];
+export type ChannelStoreArticleData = {
+  channel: string;
+  storeId: number;
+  articleId: number;
 };
 
-export enum SubscriptionListEvent {
-  SUBSCRIPTION_SELECTED = 'SUBSCRIPTION/SUBSCRIPTION_SELECTED',
+export type ResubmitSelectedStoreData = {
+  storeArticles: ChannelStoreArticleData[];
+};
+
+export type StoresByStateRecord = {
+  storeId: number;
+  storeName: string;
+  street: string;
+  suburb: string;
+};
+
+export enum StoreArticleStatus {
+  UN_PROCESSED = 'UN_PROCESSED',
+  PROCESSED = 'PROCESSED',
+  FAILED = 'FAILED',
+  IN_PROGRESS = 'IN_PROGRESS',
 }
 
-export type SubscriptionListMessages = {
-  [SubscriptionListEvent.SUBSCRIPTION_SELECTED]: SubscriptionInfo;
+export type StoresByStateUploadRecord = {
+  storeId: number;
+  storeName: string;
+  street: string;
+  suburb: string;
+  status: keyof typeof StoreArticleStatus;
 };
+
+export type StoresByStateQueryResponsePayload = Array<StoresByStateRecord>;

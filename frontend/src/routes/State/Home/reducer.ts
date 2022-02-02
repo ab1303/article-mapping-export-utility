@@ -7,14 +7,14 @@ export const subscriptionReducer = (
   action: Actions,
 ): SubscriptionInfo | null => {
   switch (action.type) {
-    case SubscriptionDeadLettersEvent.RESUBMIT_ALL_PROCESSED:
-      return {
-        ...action.payload.subscription,
-      };
-    case SubscriptionEvent.INFO_REFRESH:
-      return {
-        ...action.payload.subscription,
-      };
+    // case SubscriptionDeadLettersEvent.RESUBMIT_ALL_PROCESSED:
+    //   return {
+    //     ...action.payload.subscription,
+    //   };
+    // case SubscriptionEvent.INFO_REFRESH:
+    //   return {
+    //     ...action.payload.subscription,
+    //   };
     default:
       return state;
   }
