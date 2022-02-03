@@ -19,6 +19,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Tooltip,
   useToast,
 } from '@chakra-ui/core';
@@ -189,7 +190,14 @@ const StoreList: React.FC<{
 
           switch (original.status) {
             case StoreArticleStatus.IN_PROGRESS:
-              return <Icon name="spinner" />;
+              return (
+                <Spinner
+                  thickness="2px"
+                  size="sm"
+                  color="teal.500"
+                  emptyColor="gray.200"
+                />
+              );
             case StoreArticleStatus.PROCESSED:
               return <Icon name="check" />;
             case StoreArticleStatus.FAILED:
@@ -256,6 +264,7 @@ const StoreList: React.FC<{
 
       await uploadStoreArticlesMutationAsync(
         {
+          storeId,
           storeArticles: preparedStoreArticles,
         },
         {

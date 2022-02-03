@@ -7,11 +7,11 @@ using ArticleETLMapping.Settings;
 
 namespace ArticleETLMapping.Implementations
 {
-    public class MongoDbContext : IMongoDbContext
+    public class PartnerOrderMongoDbContext : IPartnerOrderMongoDbContext
     {
         private IMongoDatabase Db { get; }
 
-        public MongoDbContext(IOptions<MongoDbSettings> mongoSettings, IMongoClient mongoClient)
+        public PartnerOrderMongoDbContext(IOptions<PartnerOrderMongoDbSettings> mongoSettings, IMongoClient mongoClient)
         {
             var mongoDbConfig = mongoSettings?.Value ?? throw new ArgumentNullException(nameof(mongoSettings));
             Db = mongoClient.GetDatabase(mongoDbConfig.DatabaseName);

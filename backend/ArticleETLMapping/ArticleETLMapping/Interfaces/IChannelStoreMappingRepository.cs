@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ArticleETLMapping.Interfaces
 {
-    public interface IFulfilmentStoreRepository
+    public interface IChannelStoreMappingRepository
     {
-        Task<Result<IEnumerable<FulfilmentStore>>> GetStoresByState(string state);
+        Task<Result> UpsertChannelStoreMappingAsync(int storeId, List<ChannelStoreMapping> channelStoreMappings);
     }
 }

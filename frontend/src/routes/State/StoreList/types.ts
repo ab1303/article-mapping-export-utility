@@ -7,6 +7,7 @@ export type ChannelStoreArticleData = {
 };
 
 export type UploadSelectedStoreData = {
+  storeId: number;
   storeArticles: ChannelStoreArticleData[];
 };
 

@@ -1,4 +1,5 @@
 ﻿using ArticleETLMapping.Documents;
+using ArticleETLMapping.Requests;
 using ArticleETLMapping.Responses;
 using AutoMapper;
 
@@ -14,6 +15,8 @@ namespace ArticleETLMapping.Mappings
                 .ForMember(d => d.Street, opt => opt.MapFrom(s => s.Street1))
                 .ForMember(d => d.Suburb, opt => opt.MapFrom(s => s.Suburb))
                 ;
+
+            CreateMap<ChannelStoreArticle, ChannelStoreMapping>();
         }
     }
     }

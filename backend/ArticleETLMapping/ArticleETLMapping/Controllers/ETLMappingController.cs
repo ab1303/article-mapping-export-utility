@@ -1,4 +1,5 @@
-﻿using ArticleETLMapping.Interfaces;
+﻿using ArticleETLMapping.Documents;
+using ArticleETLMapping.Interfaces;
 using ArticleETLMapping.Models;
 using ArticleETLMapping.Requests;
 using ArticleETLMapping.Responses;
@@ -21,13 +22,20 @@ namespace ArticleETLMapping.Controllers
     {
         private readonly ILogger<ETLMappingController> _logger;
         private readonly IFulfilmentStoreRepository _fulfilmentStoreRepository;
+        private readonly IChannelStoreMappingRepository _channelStoreMappingRepository;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public ETLMappingController(ILogger<ETLMappingController> logger, IMapper mapper, IMediator mediator, IFulfilmentStoreRepository fulfilmentStoreRepository)
+        public ETLMappingController(ILogger<ETLMappingController> logger,
+            IMapper mapper,
+            IMediator mediator,
+            IFulfilmentStoreRepository fulfilmentStoreRepository,
+            IChannelStoreMappingRepository channelStoreMappingRepository
+            )
         {
             _logger = logger;
             _fulfilmentStoreRepository = fulfilmentStoreRepository;
+            _channelStoreMappingRepository = channelStoreMappingRepository;
             _mediator = mediator;
             _mapper = mapper;
         }
@@ -47,16 +55,25 @@ namespace ArticleETLMapping.Controllers
 
         [HttpPost]
         [Route("storeArticles/upload")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
-        public IActionResult UpoadChannelStoreArticles(ChannelStoreArticlesRequest request)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ChannelStoreArticlesResponse))]
+        public async Task<IActionResult> UpoadChannelStoreArticles(ChannelStoreArticlesRequest request)
         {
-            return Ok();
-            //var storeResults = await _fulfilmentStoreRepository.GetStoresByState(State.ToString());
-            //if (!storeResults.IsSuccess)
-            //    return NotFound();
 
+            if (request.StoreArticles.Count == 0)
+            {
+                return BadRequest(new { Message = "Store articles not found for that store" });
+            }
 
-            //return Ok(_mapper.Map<IEnumerable<StoresByStateResponse>>(storeResults.Model));
+            var storeResults = await _channelStoreMappingRepository.UpsertChannelStoreMappingAsync(
+                request.StoreId,
+                _mapper.Map<List<ChannelStoreMapping>>(request.StoreArticles)
+                );
+
+            if (!storeResults.IsSuccess)
+                return StatusCode(StatusCodes.Status500InternalServerError, storeResults.Error.Message);
+
+            return Ok(new ChannelStoreArticlesResponse { Message = "Records updated successfully" });
+
         }
 
     }

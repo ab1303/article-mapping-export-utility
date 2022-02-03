@@ -71,7 +71,9 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
     <Card>
       <Card.Header>
         <Flex textAlign="right" justify="space-between">
-          <Card.Header.Title>State wide Store Articles</Card.Header.Title>
+          <Card.Header.Title>
+            Store Articles - {storeArticles.length || ''}
+          </Card.Header.Title>
         </Flex>
       </Card.Header>
       <Card.Body>

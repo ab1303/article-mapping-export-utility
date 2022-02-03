@@ -15,11 +15,13 @@ export const useUploadArticlesMutation = () => {
     StoreArticlesUploadResponsePayload,
     AxiosError,
     UploadSelectedStoreData
-  >(formData =>
-    axios.post(`${config.apiEndpoint}/etlmapping/storeArticles/upload`, {
-      storeArticles: formData.storeArticles,
-    }),
-  );
+  >(formData => {
+    const { storeArticles, storeId } = formData;
+    return axios.post(`${config.apiEndpoint}/etlmapping/storeArticles/upload`, {
+      storeId: storeId,
+      storeArticles: storeArticles,
+    });
+  });
 
   return mutation;
 };

@@ -3,7 +3,7 @@
 namespace ArticleETLMapping.Settings
 {
     [ExcludeFromCodeCoverage]
-    public class MongoCollections
+    public class PartnerOrderMongoCollections
     {
         public string FulfilmentStoreCollection { get; set; }
         public string StoreConfigurationCollection { get; set; }

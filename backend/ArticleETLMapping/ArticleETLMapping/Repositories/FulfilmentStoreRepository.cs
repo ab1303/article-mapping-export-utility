@@ -14,20 +14,22 @@ using System.Threading.Tasks;
 namespace ArticleETLMapping.Repositories
 {
 
-    public class FulfilmentStoreRepository : BaseRepository<FulfilmentStore>, IFulfilmentStoreRepository
+    public class FulfilmentStoreRepository : BaseRepository<IPartnerOrderMongoDbContext, FulfilmentStore>, IFulfilmentStoreRepository
     {
         private readonly ILogger<FulfilmentStoreRepository> _logger;
         private readonly IOptions<EnabledStoreSettings> _enabledStoreSettings;
+        private readonly IMongoCollection<FulfilmentStore> _collection;
 
         public FulfilmentStoreRepository(
             ILogger<FulfilmentStoreRepository> logger,
-            IMongoDbContext context,
-            IOptions<MongoDbSettings> mongoDbSettings,
+            IPartnerOrderMongoDbContext context,
+            IOptions<PartnerOrderMongoDbSettings> mongoDbSettings,
             IOptions<EnabledStoreSettings> enabledStoreSettings
         ) : base(context, mongoDbSettings?.Value?.MongoCollections?.FulfilmentStoreCollection)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _enabledStoreSettings = enabledStoreSettings;
+            _collection = context.GetCollection<FulfilmentStore>(mongoDbSettings?.Value?.MongoCollections?.FulfilmentStoreCollection);
         }
 
         public async Task<Result<IEnumerable<FulfilmentStore>>> GetStoresByState(string state)
@@ -73,5 +75,7 @@ namespace ArticleETLMapping.Repositories
                 });
             }
         }
+
+       
     }
 }

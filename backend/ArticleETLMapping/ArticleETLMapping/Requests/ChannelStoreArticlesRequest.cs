@@ -13,6 +13,7 @@ namespace ArticleETLMapping.Requests
 
     public class ChannelStoreArticlesRequest
     {
+        public int StoreId { get; set; }
         public List<ChannelStoreArticle> StoreArticles { get; set; }
     }
 }

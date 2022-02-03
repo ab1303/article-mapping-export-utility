@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace ArticleETLMapping.Repositories
 {
-    public abstract class BaseRepository<TEntity> where TEntity : class
+    public abstract class BaseRepository<TContext , TEntity>
+        where TContext: IMongoContext
+        where TEntity : class
     {
         private readonly IMongoCollection<TEntity> _dbCollection;
 
-        protected BaseRepository(IMongoDbContext context, string collectionName)
+        protected BaseRepository(TContext context, string collectionName)
         {
             var mongoContext = context ?? throw new ArgumentNullException(nameof(context));
             _dbCollection = !string.IsNullOrWhiteSpace(collectionName)

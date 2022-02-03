@@ -35,19 +35,24 @@ namespace ArticleETLMapping
             services.AddMediatR(typeof(Startup).Assembly);
 
             // App Settings
-            services.Configure<MongoDbSettings>(Configuration.GetSection("Settings:MongoDbSettings"));
+            services.Configure<PartnerOrderMongoDbSettings>(Configuration.GetSection("Settings:PartnerOrderMongoDbSettings"));
+            services.Configure<PartnerIntegrationMongoDbSettings>(Configuration.GetSection("Settings:PartnerIntegrationMongoDbSettings"));
             services.Configure<EnabledStoreSettings>(Configuration.GetSection("Settings:EnabledStoreSettings"));
 
 
             // TODO: Add Services if any
 
             // Mongo
-            var mongoDbConnString = Configuration["Settings:MongoDbSettings:ConnectionString"];
+            var mongoDbConnString = Configuration["Settings:PartnerOrderMongoDbSettings:ConnectionString"];
             services.AddMongoClient(mongoDbConnString);
-            services.AddSingleton<IMongoDbContext, MongoDbContext>();
+            services.AddScoped(p => p.GetRequiredService<IMongoClient>().StartSession());
+
+            services.AddSingleton<IPartnerOrderMongoDbContext, PartnerOrderMongoDbContext>();
+            services.AddSingleton<IPartnerIntegrationMongoDbContext, PartnerIntegrationMongoDbContext>();
 
             // Repo
             services.AddTransient<IFulfilmentStoreRepository, FulfilmentStoreRepository>();
+            services.AddTransient<IChannelStoreMappingRepository, ChannelStoreMappingRepository>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>
