@@ -63,6 +63,7 @@ const selectionHook = (hooks: Hooks<any>) => {
         // if (row.original.storeId === 1370) return null;
         switch (row.original.status) {
           case StoreArticleStatus.UN_PROCESSED:
+          case StoreArticleStatus.FAILED:
             return (
               <>
                 {
@@ -73,7 +74,7 @@ const selectionHook = (hooks: Hooks<any>) => {
             );
           case StoreArticleStatus.IN_PROGRESS:
           case StoreArticleStatus.PROCESSED:
-          case StoreArticleStatus.FAILED:
+
           default:
             return null;
         }
@@ -288,6 +289,14 @@ const StoreList: React.FC<{
             });
           },
           onError: (error: AxiosError) => {
+            setTableData(prevTableData =>
+              prevTableData.map(d => {
+                if (d.storeId === storeId)
+                  return { ...d, status: StoreArticleStatus.FAILED };
+                return d;
+              }),
+            );
+
             let errorMessage = error.message;
             if (error.response && error.response.data) {
               errorMessage = `${errorMessage}. ${error.response.data.message}`;

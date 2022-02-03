@@ -43,12 +43,17 @@ namespace ArticleETLMapping
             // TODO: Add Services if any
 
             // Mongo
-            var mongoDbConnString = Configuration["Settings:PartnerOrderMongoDbSettings:ConnectionString"];
-            services.AddMongoClient(mongoDbConnString);
-            services.AddScoped(p => p.GetRequiredService<IMongoClient>().StartSession());
 
-            services.AddSingleton<IPartnerOrderMongoDbContext, PartnerOrderMongoDbContext>();
+            //services.AddSingleton<IMongoClient>(sp =>
+            //{
+            //    var mongoDbConnString = Configuration["Settings:PartnerOrderMongoDbSettings:ConnectionString"];
+            //    return new MongoClient(mongoDbConnString);
+            //});
+            
+
+            services.AddSingleton<IPartnerOrderReferenceMongoDbContext, PartnerOrderReferenceMongoDbContext>();
             services.AddSingleton<IPartnerIntegrationMongoDbContext, PartnerIntegrationMongoDbContext>();
+            //services.AddScoped(p => p.GetRequiredService<IPartnerIntegrationMongoDbContext>().Client.StartSession());
 
             // Repo
             services.AddTransient<IFulfilmentStoreRepository, FulfilmentStoreRepository>();

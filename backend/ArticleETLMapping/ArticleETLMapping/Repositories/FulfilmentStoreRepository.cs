@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace ArticleETLMapping.Repositories
 {
 
-    public class FulfilmentStoreRepository : BaseRepository<IPartnerOrderMongoDbContext, FulfilmentStore>, IFulfilmentStoreRepository
+    public class FulfilmentStoreRepository : BaseRepository<IPartnerOrderReferenceMongoDbContext, FulfilmentStore>, IFulfilmentStoreRepository
     {
         private readonly ILogger<FulfilmentStoreRepository> _logger;
         private readonly IOptions<EnabledStoreSettings> _enabledStoreSettings;
@@ -22,7 +22,7 @@ namespace ArticleETLMapping.Repositories
 
         public FulfilmentStoreRepository(
             ILogger<FulfilmentStoreRepository> logger,
-            IPartnerOrderMongoDbContext context,
+            IPartnerOrderReferenceMongoDbContext context,
             IOptions<PartnerOrderMongoDbSettings> mongoDbSettings,
             IOptions<EnabledStoreSettings> enabledStoreSettings
         ) : base(context, mongoDbSettings?.Value?.MongoCollections?.FulfilmentStoreCollection)

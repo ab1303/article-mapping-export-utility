@@ -61,7 +61,7 @@ namespace ArticleETLMapping.Controllers
 
             if (request.StoreArticles.Count == 0)
             {
-                return BadRequest(new { Message = "Store articles not found for that store" });
+                return BadRequest(new ChannelStoreArticlesResponse { Message = "Store articles not found for that store" });
             }
 
             var storeResults = await _channelStoreMappingRepository.UpsertChannelStoreMappingAsync(
@@ -70,7 +70,8 @@ namespace ArticleETLMapping.Controllers
                 );
 
             if (!storeResults.IsSuccess)
-                return StatusCode(StatusCodes.Status500InternalServerError, storeResults.Error.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    new ChannelStoreArticlesResponse { Message = storeResults.Error.Message } );
 
             return Ok(new ChannelStoreArticlesResponse { Message = "Records updated successfully" });
 

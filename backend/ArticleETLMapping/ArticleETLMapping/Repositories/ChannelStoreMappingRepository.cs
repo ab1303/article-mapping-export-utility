@@ -17,28 +17,25 @@ namespace ArticleETLMapping.Repositories
     public class ChannelStoreMappingRepository : BaseRepository<IPartnerIntegrationMongoDbContext, ChannelStoreMapping>, IChannelStoreMappingRepository
     {
         private readonly ILogger<ChannelStoreMappingRepository> _logger;
-        private readonly IClientSessionHandle _session;
+        private readonly IPartnerIntegrationMongoDbContext _context;
         private readonly IMongoCollection<ChannelStoreMapping> _collection;
 
         public ChannelStoreMappingRepository(
             ILogger<ChannelStoreMappingRepository> logger,
             IPartnerIntegrationMongoDbContext context,
-            IClientSessionHandle session,
             IOptions<PartnerIntegrationMongoDbSettings> mongoDbSettings
         ) : base(context, mongoDbSettings?.Value?.MongoCollections?.ChannelStoreMappingCollection)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _session = session;
+            _context = context;
             _collection = context.GetCollection<ChannelStoreMapping>(mongoDbSettings?.Value?.MongoCollections?.ChannelStoreMappingCollection);
         }
 
-      
+
         public async Task<Result> UpsertChannelStoreMappingAsync(int storeId, List<ChannelStoreMapping> channelStoreMappings)
         {
             try
             {
-                // Now need a mongo client session
-
                 // Delete All documents for that (channel, store)
 
                 var filter = GetFilterDefinition("UE", storeId);
@@ -117,7 +114,9 @@ namespace ArticleETLMapping.Repositories
 
         private async Task InsertOutboxDocumentsAsync(IEnumerable<ChannelStoreMapping> documents)
         {
-            await _collection.InsertManyAsync(_session, documents);
+
+            var session = _context.Client.StartSession();
+            await _collection.InsertManyAsync(session, documents);
         }
 
         private static FilterDefinition<ChannelStoreMapping> GetFilterDefinition(string channel, int storeId)

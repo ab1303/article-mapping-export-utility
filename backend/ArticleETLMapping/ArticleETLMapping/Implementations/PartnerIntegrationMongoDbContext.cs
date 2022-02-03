@@ -10,11 +10,13 @@ namespace ArticleETLMapping.Implementations
     public class PartnerIntegrationMongoDbContext : IPartnerIntegrationMongoDbContext
     {
         private IMongoDatabase Db { get; }
+        public IMongoClient Client { get; }
 
-        public PartnerIntegrationMongoDbContext(IOptions<PartnerIntegrationMongoDbSettings> mongoSettings, IMongoClient mongoClient)
+        public PartnerIntegrationMongoDbContext(IOptions<PartnerIntegrationMongoDbSettings> mongoSettings)
         {
             var mongoDbConfig = mongoSettings?.Value ?? throw new ArgumentNullException(nameof(mongoSettings));
-            Db = mongoClient.GetDatabase(mongoDbConfig.DatabaseName);
+            Client = new MongoClient(mongoDbConfig.ConnectionString);
+            Db = Client.GetDatabase(mongoDbConfig.DatabaseName);
 
             var pack = new ConventionPack
             {
