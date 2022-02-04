@@ -105,13 +105,16 @@ const StoreList: React.FC<{
   }, [data]);
 
   function prepareStoreArticles(storeId: number): ChannelStoreArticleData[] {
-    const storeArticlesPayload = storeArticles.map(sa => {
-      return {
-        channel: 'UE',
-        storeId: storeId,
-        articleId: sa.externalId,
-      };
-    });
+    const storeArticlesPayload = storeArticles
+      .filter(sa => !!sa.externalData)
+      .map(sa => {
+        return {
+          channel: 'UE',
+          storeId: storeId,
+          articleId: sa.externalId,
+          isActive: true,
+        };
+      });
     return storeArticlesPayload;
   }
 
@@ -320,7 +323,9 @@ const StoreList: React.FC<{
     <Card>
       <Card.Header>
         <Flex textAlign="right" justify="space-between">
-          <Card.Header.Title>{state} Stores</Card.Header.Title>
+          <Card.Header.Title>
+            {state} Stores - ({tableData.length || ''})
+          </Card.Header.Title>
           <Menu>
             <MenuButton as={Button}>
               <MdMoreVert />

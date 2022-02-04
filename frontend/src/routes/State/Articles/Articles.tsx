@@ -72,7 +72,8 @@ const StoreArticles: React.FC<StoreArticlesProps> = ({
       <Card.Header>
         <Flex textAlign="right" justify="space-between">
           <Card.Header.Title>
-            Store Articles - {storeArticles.length || ''}
+            Store Articles - Total ({storeArticles.length || ''}), Valid (
+            {storeArticles.filter(sa => !!sa.externalId).length || ''})
           </Card.Header.Title>
         </Flex>
       </Card.Header>

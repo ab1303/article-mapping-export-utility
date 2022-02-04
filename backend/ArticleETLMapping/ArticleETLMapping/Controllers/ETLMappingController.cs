@@ -56,7 +56,7 @@ namespace ArticleETLMapping.Controllers
         [HttpPost]
         [Route("storeArticles/upload")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ChannelStoreArticlesResponse))]
-        public async Task<IActionResult> UpoadChannelStoreArticles(ChannelStoreArticlesRequest request)
+        public async Task<IActionResult> UpoadChannelStoreArticles([FromBody]ChannelStoreArticlesRequest request)
         {
 
             if (request.StoreArticles.Count == 0)

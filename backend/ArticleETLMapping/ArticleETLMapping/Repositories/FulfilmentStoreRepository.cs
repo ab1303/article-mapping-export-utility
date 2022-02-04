@@ -43,11 +43,17 @@ namespace ArticleETLMapping.Repositories
             {
                 var storeIdsByState = state switch
                 {
-                    "NSW" => _enabledStoreSettings.Value.NSW,
-                    "VIC" => _enabledStoreSettings.Value.VIC,
-                    "QLD" => _enabledStoreSettings.Value.QLD,
+                    "NSW_SUPER" => _enabledStoreSettings.Value.NSW_SUPER,
+                    "NSW_METRO" => _enabledStoreSettings.Value.NSW_METRO,
+                    "VIC_SUPER" => _enabledStoreSettings.Value.VIC_SUPER,
+                    "VIC_METRO" => _enabledStoreSettings.Value.VIC_METRO,
+                    "QLD_SUPER" => _enabledStoreSettings.Value.QLD_SUPER,
+                    "QLD_METRO" => _enabledStoreSettings.Value.QLD_METRO,
                     _ => throw new NotImplementedException()
                 };
+
+                if(storeIdsByState == null || storeIdsByState.Length ==0) 
+                    return Result<IEnumerable<FulfilmentStore>>.Ok(new List<FulfilmentStore>());
 
                 var storeIdsByStateArray = storeIdsByState.Split(',').Select(x => Convert.ToInt32(x.Trim())).ToList();
 

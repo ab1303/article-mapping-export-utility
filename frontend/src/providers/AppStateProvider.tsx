@@ -6,7 +6,14 @@ import { Actions, AppState } from 'src/types';
 const initialAppState: AppState = {
   isLoading: false,
   entity: {
-    states: ['NSW', 'VIC', 'QLD'],
+    states: [
+      'NSW_SUPER',
+      'NSW_METRO',
+      'VIC_SUPER',
+      'VIC_METRO',
+      'QLD_SUPER',
+      'QLD_METRO',
+    ],
   },
   selectedSubscription: null,
 };

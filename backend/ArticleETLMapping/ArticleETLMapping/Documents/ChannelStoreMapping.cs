@@ -9,5 +9,6 @@ namespace ArticleETLMapping.Documents
         public string Channel { get; set; }
         public int StoreId { get; set; }
         public int ArticleId { get; set; }
+        public bool IsActive { get; set; }
     }
 }
