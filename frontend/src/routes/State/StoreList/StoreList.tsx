@@ -152,7 +152,7 @@ const StoreList: React.FC<{
       },
       {
         Header: 'Payload',
-        Cell: ({ row }: CellProps<any>) => {
+        Cell: ({ row }: CellProps<StoresByStateUploadRecord>) => {
           const { index } = row;
 
           return (
@@ -170,7 +170,7 @@ const StoreList: React.FC<{
       },
       {
         Header: 'Download',
-        Cell: ({ row }: CellProps<any>) => {
+        Cell: ({ row }: CellProps<StoresByStateUploadRecord>) => {
           const { original } = row;
 
           return storeArticles.length ? (
@@ -178,7 +178,7 @@ const StoreList: React.FC<{
               style={{ cursor: 'hand' }}
               onClick={() => {
                 exportDataHandler(
-                  original.storeId,
+                  `${original.storeId}`,
                   prepareStoreArticles(original.storeId),
                 );
               }}
